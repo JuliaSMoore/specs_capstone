@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<form action="{{ url_for('add_request') }}" method="POST">
+    {{ request_form.csrf_token() }}
+
+    {{request_form.title.label}}
+    {{request_form.title}}
+
+    {{request_form.description.label}}
+    {{request_form.description}}
+
+    {{request_form.image_url.label}}
+    {{request_form.image_url}}
+
+    {{request_form.submit}}
+</form>
+
+
+{% endblock %}

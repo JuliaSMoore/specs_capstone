@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+{{ request.title }}<br>
+{{ request.created_by.username }}<br>
+{{ request.description }}<br>
+{% if request.image_url %}
+    <img width=500px src="{{request.image_url}}"/><br>
+{% else %}
+    <img width=500px src="https://wallup.net/wp-content/uploads/2018/09/29/666600-fantasy-landscape-art-artwork-nature-scenery.jpg" /><br>
+{% endif %}
+{% if not rating %}
+    <form action="{{url_for('rate_request', request_id=request.request_id)}}" method="POST">
+    {{ rating_form.csrf_token() }}
+    {{ rating_form.score.label }}
+    {{ rating_form.score }}
+    {{ rating_form.submit }}
+    </form>
+{% else %}
+    {{ rating.score }}
+    <a href="{{ url_for('edit_rating', rating_id=rating.rating_id) }}"><button>Edit</button></a><br>
+{% endif %}
+{{ ratings_average }}<br>
+{{ ratings_total }}<br>
+{{ request.status }}<br>
+{% if request.booked == True %}
+    {{request.booked_by.username}}<br>
+{% endif %}
+{% if request.status == "In Process" and request.booked_by_id == current_user.id %}
+    <a href="{{ url_for('complete_request', request_id=request.request_id) }}"><button>Complete</button></a>
+    <a href="{{ url_for('drop_request', request_id=request.request_id) }}"><button>Drop</button></a><br>
+{% endif %}
+{% if request.created_by_id == current_user.id %}
+    <a href="{{url_for('delete_request', request_id=request.request_id)}}"><button>Delete Request</button></a><br>
+{% endif %}
+
+{% if current_user.category == "Writer" and request.booked == False %}
+    <a href="{{ url_for('book_request', request_id=request.request_id) }}"><button>Book</button></a><br>
+{% endif %}
+
+{% if characters: %}
+{% for character in characters %}
+    <a href="{{url_for('character', character_id=character.character_id)}}">{{character.name}}</a>
+    {% if request.created_by_id == current_user.id %}
+    <a href="{{ url_for('delete_character_from_request', request_id=request.request_id, character_id=character.character_id) }}"><button>Delete</button></a>
+    {% endif %}
+    <br>
+{% endfor %}
+{% elif request.created_by_id == current_user.id%}
+<form action="{{ url_for('add_character_to_request', request_id=request.request_id) }}" method="POST">
+{{ character_form.csrf_token() }}
+{{ character_form.characters }}
+{{ character_form.submit }}
+</form>
+{% else %}
+No characters!<br>
+{% endif %}
+
+{% if tags: %}
+{% for tag in tags: %}
+    {{tag.name}}
+    {% if request.created_by_id == current_user.id %}
+    <a href="{{ url_for('delete_tag', request_id=request.request_id, tag_id=tag.tag_id) }}"><button>Delete</button></a>
+    {% endif %}  
+    <br>
+{% endfor %}
+{% elif request.created_by_id == current_user.id %}
+<form action="{{ url_for('add_tags', request_id=request.request_id) }}" method="POST">
+{{ tag_form.csrf_token() }}
+{{ tag_form.tags }}
+{{ tag_form.submit }}
+</form>
+{% else %}
+No tags!
+{% endif %}
+
+<form action="{{ url_for('add_comment', request_id=request.request_id) }}" method="POST">
+{{ comment_form.csrf_token() }}
+{{ comment_form.text.label }}
+{{ comment_form.text | safe }}
+{{ comment_form.submit }}
+</form>
+
+{% for comment in comments: %}
+    {{ comment.users.username }}<br>
+    {{ comment.text | safe}} <br>
+    {% if comment.user_id == current_user.id %}
+        <a href="{{ url_for('delete_comment', request_id=request.request_id, comment_id=comment.comment_id) }}"><button>Delete Comment</button></a>
+        <a href="{{url_for('edit_comment', comment_id=comment.comment_id)}}"><button>Edit</button></a><br>
+    {% endif %}
+    ------ <br>
+{% endfor %}
+
+{% if comments.has_prev %}
+    <a href="{{url_for('request', page=comments.prev_num, request_id=request.request_id)}}">{{'<'}}</a>
+{% endif %}
+{% for number in comments.iter_pages() %}
+    {% if comments.page != number %}
+        <a href="{{ url_for('request', page=number, request_id=request.request_id)}}">
+        {{ number }}
+        </a>
+    {% else %}
+        {{ number }}
+    {% endif %}
+    {% endfor %}
+
+{% if comments.has_next %}
+<a href="{{url_for('request', page=comments.next_num, request_id=request.request_id)}}">{{'>'}}</a>
+{% endif %}
+
+<br>
+{{comments.total}}
+{% endblock %}
+

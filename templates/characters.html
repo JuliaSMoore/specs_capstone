@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+{% for character in characters %}
+
+<a href="{{ url_for('character', character_id=character.character_id)}}">
+{{character.name}}
+</a>
+<br>
+{{character.description}}<br>
+{{ character.status }}<br>
+-------
+<br>
+
+{% endfor %}
+
+{% if characters.has_prev %}
+    <a href="{{url_for('characters', page=characters.prev_num)}}">{{'<'}}</a>
+{% endif %}
+{% for number in characters.iter_pages() %}
+    {% if characters.page != number %}
+        <a href="{{ url_for('characters', page=number)}}">
+        {{ number }}
+        </a>
+    {% else %}
+        {{ number }}
+    {% endif %}
+    {% endfor %}
+
+{% if characters.has_next %}
+<a href="{{url_for('characters', page=characters.next_num)}}">{{'>'}}</a>
+{% endif %}
+
+<br>
+{{characters.total}}
+
+{% endblock %}

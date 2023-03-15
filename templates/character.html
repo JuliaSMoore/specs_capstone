@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+{{ character.name }}<br>
+{{ character.created_by.username }}<br>
+{{ character.description }}<br>
+{% if character.image_url%}
+    <img width=500px src="{{character.image_url}}"/><br>
+{%else%}
+    <img width=500px src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/SpongeBob_SquarePants_character.svg/800px-SpongeBob_SquarePants_character.svg.png"/><br>
+{% endif %}
+{{character.status}}<br>
+{% if character.booked == True %}
+    {{character.booked_by.username}}<br>
+{% endif %}
+{% if current_user.category == "Writer" and character.booked == False %}
+<a href="{{ url_for('book_character', character_id=character.character_id) }}"><button>Book</button></a>
+{% endif %}
+
+{% if character.status == "In Process" and character.booked_by_id == current_user.id %}
+    <a href="{{ url_for('complete_character', character_id=character.character_id) }}"><button>Complete</button></a>
+    <a href="{{ url_for('drop_character', character_id=character.character_id) }}"><button>Drop</button></a><br>
+{% endif %}
+
+{% if character.created_by_id == current_user.id %}
+<a href="{{url_for('delete_character', character_id=character.character_id)}}"><button>Delete</button></a>
+{% endif %}
+
+{% endblock %}

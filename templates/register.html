@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<form action="{{ url_for('register') }}" method="POST">
+    {{ register_form.csrf_token() }}
+    {{ register_form.username.label }}
+    {{ register_form.username }}
+    {{ register_form.email.label }}
+    {{ register_form.email }}
+    {{ register_form.password.label }}
+    {{ register_form.password }}
+    {{ register_form.password_confirm.label }}
+    {{ register_form.password_confirm }}
+    {{ register_form.category.label }}
+    {{ register_form.category }}
+    {{ register_form.submit }}
+
+
+</form>
+{% endblock %}
