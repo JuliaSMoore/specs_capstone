@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+import datetime
 
 db = SQLAlchemy()
 
@@ -35,6 +36,8 @@ class Character(db.Model):
     name = db.Column(db.String, unique=True, nullable=False)
     description = db.Column(db.Text, nullable=False)
     image_url = db.Column(db.String)
+    time_created = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
+    time_updated = db.Column(db.DateTime(timezone=True), onupdate=db.func.now())
     status = db.Column(db.String, nullable=False, default="Avaliable")
     booked = db.Column(db.Boolean, default=False, nullable=False)
     booked_by_id = db.Column(db.Integer, db.ForeignKey("users.id"))
@@ -57,6 +60,8 @@ class Request(db.Model):
     title = db.Column(db.String, unique=True, nullable=False)
     description = db.Column(db.Text, nullable=False)
     image_url = db.Column(db.String)
+    time_created = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
+    time_updated = db.Column(db.DateTime(timezone=True), onupdate=db.func.now())
     status = db.Column(db.String, nullable=False, default="Avaliable")
     booked = db.Column(db.Boolean, default=False, nullable=False)
     booked_by_id = db.Column(db.Integer, db.ForeignKey("users.id"))
@@ -103,6 +108,8 @@ class Comment(db.Model):
 
     comment_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     text = db.Column(db.Text, nullable=False)
+    time_created = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
+    time_updated = db.Column(db.DateTime(timezone=True), onupdate=db.func.now())
     request_id = db.Column(db.Integer, db.ForeignKey(
         "requests.request_id"), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)

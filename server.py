@@ -4,9 +4,11 @@ from model import connect_to_db, db
 from forms import RequestForm, CharacterForm, CommentForm, RatingForm, LoginForm, RegisterForm, AddTagsForm, AddCharactersForm
 import controller
 from jinja2 import StrictUndefined
+from flask_ckeditor import CKEditor
 
 app = Flask(__name__)
 
+ckeditor = CKEditor(app)
 app.secret_key = "dev"
 app.jinja_env.undefined = StrictUndefined
 login_manager = LoginManager()
@@ -75,6 +77,20 @@ def add_request():
         new_request2 = controller.get_request(new_request.request_id)
         request_id = new_request2.request_id
         return redirect(f'/requests/{request_id}')
+
+
+@app.route('/edit_request/<request_id>', methods=["GET", "POST"])
+def edit_request(request_id):
+    request = controller.get_request(request_id)
+    request_form = RequestForm(obj=request)
+    if request_form.validate_on_submit():
+        request.title = request_form.title.data
+        request.description = request_form.description.data
+        request.image_url = request_form.image_url.data
+        db.session.add(request)
+        db.session.commit()
+        return redirect(f'/requests/{request.request_id}')
+    return render_template('create-request.html', request_form=request_form, request=request)
 
 
 @app.route('/delete_request/<request_id>')
@@ -168,6 +184,20 @@ def add_character():
         return redirect(f'/characters/{character_id}')
 
 
+@app.route('/edit_character/<character_id>', methods=["GET", "POST"])
+def edit_character(character_id):
+    character = controller.get_character(character_id)
+    character_form = CharacterForm(obj=character)
+    if character_form.validate_on_submit():
+        character.name = character_form.name.data
+        character.description = character_form.description.data
+        character.image_url = character_form.image_url.data
+        db.session.add(character)
+        db.session.commit()
+        return redirect(f'/characters/{character.character_id}')
+    return render_template('create-character.html', character_form=character_form, character=character)
+
+
 @app.route('/delete_character/<character_id>')
 def delete_character(character_id):
     request_character = controller.get_request_character_char(character_id)
@@ -209,6 +239,7 @@ def drop_character(character_id):
     db.session.commit()
     return redirect(f'/characters/{character_id}')
 
+
 @app.route('/<request_id>/add_character_to_request/', methods=["POST"])
 def add_character_to_request(request_id):
     character_form = AddCharactersForm()
@@ -219,10 +250,12 @@ def add_character_to_request(request_id):
         character_id = controller.get_character_by_name(character)
         print(character_id)
         print(character_id.character_id)
-        entry = controller.create_request_character(request_id, character_id.character_id)
+        entry = controller.create_request_character(
+            request_id, character_id.character_id)
         db.session.add(entry)
         db.session.commit()
     return redirect(f'/requests/{request_id}')
+
 
 @app.route('/delete_character_from_request/<request_id>/<character_id>')
 def delete_character_from_request(request_id, character_id):
@@ -295,7 +328,7 @@ def edit_rating(rating_id):
     return render_template('edit-rating.html', rating=rating, rating_form=rating_form)
 
 
-#TAGS
+# TAGS
 
 @app.route('/<request_id>/add_tags', methods=["GET", "POST"])
 def add_tags(request_id):
@@ -308,18 +341,13 @@ def add_tags(request_id):
         db.session.commit()
     return redirect(f'/requests/{request_id}')
 
+
 @app.route('/delete_tag/<request_id>/<tag_id>')
 def delete_tag(request_id, tag_id):
     tag = controller.get_request_tag_by_both_ids(request_id, tag_id)
     db.session.delete(tag)
     db.session.commit()
     return redirect(f'/requests/{request_id}')
-
-
-# @app.route('/try_code')
-# def try_code():
-#     tag_form = AddTagsForm()
-#     return render_template('try-code.html', tag_form=tag_form)
 
 
 # LOGIN
@@ -368,6 +396,19 @@ def logout():
     logout_user()
     flash('Logged out!')
     return redirect(url_for('login'))
+
+
+@app.route('/users/<user_id>')
+@login_required
+def user_profile(user_id):
+    user = controller.get_user_by_id(user_id)
+    requests = controller.get_request_by_user_id(user_id)
+    characters = controller.get_character_by_user_id(user_id)
+    comments = controller.get_comment_by_user_id(user_id)
+    booked_requests = controller.get_booked_requests_by_user_id(user_id)
+    booked_characters = controller.get_booked_character_by_user_id(user_id)
+    ratings = controller.get_rating_by_user_id(user_id)
+    return render_template('user.html', user=user, requests=requests, characters=characters, comments=comments, booked_requests=booked_requests, booked_characters=booked_characters, ratings=ratings)
 
 
 if __name__ == "__main__":

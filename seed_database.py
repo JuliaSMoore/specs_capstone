@@ -26,7 +26,7 @@ for n in range(20):
 
 for n in range(20):
     name = f'character{n}'
-    description = f'This is a very cool and appealing character {n} that did so many cool things in their life and have more to do! \n Write about me!'
+    description = f'This is a very <b>cool</b> and appealing character {n} that did so <i>many</i> cool things in their life and have more to do! <br> Write about me!'
     user = randint(1, 20)
     character = controller.create_character(name, description, None, user)
     with server.app.app_context():
@@ -35,7 +35,7 @@ for n in range(20):
 
 for n in range(20):
     title = f'request{n}'
-    description = f"This is a great request {n} I'm submitting and I would like to read a story about something great and awesome. Please, writers, write this story for me!"
+    description = f"This is a great <b>request</b> {n} I'm submitting and I would <i>like</i> to read a story about something great and awesome. <br> Please, writers, write this story for me!"
     user = randint(1, 20)
     request = controller.create_request(title, description, None, user)
     with server.app.app_context():
@@ -72,7 +72,7 @@ for n in range(30):
 
 
 for n in range(30):
-    text = f"This is a comment or a review {n} left for one of those awesome requests. I definitely like this idea and hope somebody is going to write about it!"
+    text = f"This is a comment or a review {n} left for one of those <b>awesome</b> requests. <br>I <i>definitely</i> like this idea and hope somebody is going to write about it!"
     request_id = randint(1, 20)
     user_id = randint(1, 20)
 

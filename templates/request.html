@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
 {% block body %}
-
 {{ request.title }}<br>
 {{ request.created_by.username }}<br>
-{{ request.description }}<br>
+{{ request.time_created }}<br>
+{{ request.description|safe}}<br>
 {% if request.image_url %}
     <img width=500px src="{{request.image_url}}"/><br>
 {% else %}
@@ -32,6 +32,7 @@
     <a href="{{ url_for('drop_request', request_id=request.request_id) }}"><button>Drop</button></a><br>
 {% endif %}
 {% if request.created_by_id == current_user.id %}
+    <a href="{{ url_for('edit_request', request_id=request.request_id) }}"><button>Edit Request</button></a>
     <a href="{{url_for('delete_request', request_id=request.request_id)}}"><button>Delete Request</button></a><br>
 {% endif %}
 
@@ -47,7 +48,7 @@
     {% endif %}
     <br>
 {% endfor %}
-{% elif request.created_by_id == current_user.id%}
+{% elif request.created_by_id == current_user.id %}
 <form action="{{ url_for('add_character_to_request', request_id=request.request_id) }}" method="POST">
 {{ character_form.csrf_token() }}
 {{ character_form.characters }}
@@ -77,13 +78,15 @@ No tags!
 
 <form action="{{ url_for('add_comment', request_id=request.request_id) }}" method="POST">
 {{ comment_form.csrf_token() }}
-{{ comment_form.text.label }}
 {{ comment_form.text | safe }}
 {{ comment_form.submit }}
 </form>
+{{ ckeditor.load() }}
+{{ ckeditor.config(name='text') }}
 
 {% for comment in comments: %}
     {{ comment.users.username }}<br>
+    {{ comment.time_created }}<br>
     {{ comment.text | safe}} <br>
     {% if comment.user_id == current_user.id %}
         <a href="{{ url_for('delete_comment', request_id=request.request_id, comment_id=comment.comment_id) }}"><button>Delete Comment</button></a>

@@ -4,7 +4,8 @@
 
 {{ character.name }}<br>
 {{ character.created_by.username }}<br>
-{{ character.description }}<br>
+{{ character.time_created }} <br>
+{{ character.description|safe }}<br>
 {% if character.image_url%}
     <img width=500px src="{{character.image_url}}"/><br>
 {%else%}
@@ -24,6 +25,7 @@
 {% endif %}
 
 {% if character.created_by_id == current_user.id %}
+<a href="{{ url_for('edit_character', character_id=character.character_id) }}"><button>Edit</button></a>
 <a href="{{url_for('delete_character', character_id=character.character_id)}}"><button>Delete</button></a>
 {% endif %}
 

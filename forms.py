@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField, SelectField, SubmitField, TextAreaField, RadioField, ValidationError, SelectMultipleField, widgets
+from wtforms import PasswordField, StringField, SelectField, SubmitField, RadioField, ValidationError, SelectMultipleField, widgets
 from wtforms.validators import DataRequired, Length, Email, EqualTo
+from flask_ckeditor import CKEditorField
 from model import User
 import controller
 from flask_login import current_user
@@ -29,18 +30,18 @@ class RegisterForm(FlaskForm):
 
 class RequestForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(), Length(min=5, max=50)])
-    description = TextAreaField('Description', validators=[DataRequired(), Length(min=50, max=1000)])
+    description = CKEditorField('Description', validators=[DataRequired(), Length(min=50, max=1000)])
     image_url = StringField('Image')
     submit = SubmitField('Submit')
 
 class CharacterForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(min=5, max=50)])
-    description = TextAreaField('Description', validators=[DataRequired(), Length(min=50, max=1000)])
+    description = CKEditorField('Description', validators=[DataRequired(), Length(min=50, max=1000)])
     image_url = StringField('Image')
     submit = SubmitField('Submit')
 
 class CommentForm(FlaskForm):
-    text = TextAreaField('Description', validators=[DataRequired(), Length(min=5, max=1000)])
+    text = CKEditorField('Description', validators=[DataRequired(), Length(min=5, max=1000)])
     submit = SubmitField('Submit')
 
 class RatingForm(FlaskForm):

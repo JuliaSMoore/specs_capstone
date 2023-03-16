@@ -46,14 +46,25 @@ def get_characters_by_request_id(request_id):
 def get_request_character_char(character_id):
     return Request_Character.query.filter_by(character_id=character_id).all()
 
+
 def get_characters_by_created_id(created_by_id):
     return Character.query.filter_by(created_by_id=created_by_id).all()
+
 
 def get_character_by_name(name):
     return Character.query.filter_by(name=name).first()
 
+
 def get_character_by_both_ids(request_id, character_id):
     return Request_Character.query.filter(Request_Character.request_id == request_id, Request_Character.character_id == character_id).first()
+
+
+def get_character_by_user_id(user_id):
+    return Character.query.filter_by(created_by_id=user_id).all()
+
+
+def get_booked_character_by_user_id(user_id):
+    return Character.query.filter_by(booked_by_id=user_id).all()
 
 
 # REQUEST
@@ -83,6 +94,14 @@ def get_request_tag(request_id):
     return Request_Tag.query.filter_by(request_id=request_id)
 
 
+def get_request_by_user_id(user_id):
+    return Request.query.filter_by(created_by_id=user_id).all()
+
+
+def get_booked_requests_by_user_id(user_id):
+    return db.session.execute(db.select(Request).filter_by(booked_by_id=user_id)).scalars()
+
+
 # TAG
 
 def create_tag(name):
@@ -99,13 +118,16 @@ def get_tags_by_request_id(request_id):
 def get_tags():
     return Tag.query.all()
 
+
 def get_tags_by_name(name):
     return Tag.query.filter_by(name=name).first()
 
+
 def get_request_tag_by_both_ids(request_id, tag_id):
-    return Request_Tag.query.filter(Request_Tag.request_id == request_id, Request_Tag.tag_id == tag_id ).first()
+    return Request_Tag.query.filter(Request_Tag.request_id == request_id, Request_Tag.tag_id == tag_id).first()
 
 # RATING
+
 
 def create_rating(score, request_id, user_id):
 
@@ -134,6 +156,10 @@ def get_rating_by_id(rating_id):
     return Rating.query.get(rating_id)
 
 
+def get_rating_by_user_id(user_id):
+    return db.session.execute(db.select(Rating).filter_by(user_id=user_id)).scalars()
+
+
 # COMMENT
 
 def create_comment(text, request_id, user_id):
@@ -146,13 +172,18 @@ def create_comment(text, request_id, user_id):
 def get_comment_by_request_id(request_id):
     return Comment.query.filter_by(request_id=request_id)
 
+
 def get_comments(request_id):
     page = request.args.get('page', 1, type=int)
-    return Comment.query.filter_by(request_id=request_id).paginate(page=page, per_page=10)
+    return Comment.query.filter_by(request_id=request_id).order_by(Comment.time_created.desc()).paginate(page=page, per_page=10)
 
 
 def get_comment_by_id(comment_id):
     return Comment.query.get(comment_id)
+
+
+def get_comment_by_user_id(user_id):
+    return Comment.query.filter_by(user_id=user_id).all()
 
 
 # MISC
@@ -170,5 +201,3 @@ def create_request_tag(request_id, tag_id):
     request_tag = Request_Tag(request_id=request_id, tag_id=tag_id)
 
     return request_tag
-
-

@@ -2,7 +2,7 @@
 
 {% block body %}
 
-<form action="{{ url_for('add_request') }}" method="POST">
+<form method="POST">
     {{ request_form.csrf_token() }}
 
     {{request_form.title.label}}
@@ -16,6 +16,7 @@
 
     {{request_form.submit}}
 </form>
-
+{{ ckeditor.load() }}
+{{ ckeditor.config(name='description') }}
 
 {% endblock %}
