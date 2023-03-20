@@ -73,13 +73,15 @@
 Characters Attached</button></h2>
 <div id="collapseChar" class="accordion-collapse collapse" aria-labelledby="headingChar" data-bs-parent="#accordionExample">
     <div class="accordion-body">
+        <div class="character-container">
 {% if characters: %}
 {% for character in characters %}
+<span class="character-tag">
     <a href="{{url_for('character', character_id=character.character_id)}}">{{character.name}}</a>
     {% if request.created_by_id == current_user.id %}
     <a href="{{ url_for('delete_character_from_request', request_id=request.request_id, character_id=character.character_id) }}"><img title="delete" class="icon" src="../static/images/trash.png" alt="delete"></a>
     {% endif %}
-    <br>
+</>
 {% endfor %}
 {% elif request.created_by_id == current_user.id %}
 <form action="{{ url_for('add_character_to_request', request_id=request.request_id) }}" method="POST">
@@ -93,6 +95,7 @@ No characters!<br>
 </div>
 </div>
 </div>
+</div>
 <div class="accordion" id="accordionExample">
     <div class="accordion-item">
       <h2 class="accordion-header" id="headingTags">
@@ -100,11 +103,13 @@ No characters!<br>
 Tags</button></h2>
 <div id="collapseTags" class="accordion-collapse collapse" aria-labelledby="headingTags" data-bs-parent="#accordionExample">
     <div class="accordion-body">
+        <div class="tag-container">
 {% if tags: %}
 {% for tag in tags: %}
-    {{tag.name}}
+    <span class="tag">{{tag.name}}
     {% if request.created_by_id == current_user.id %}
     <a href="{{ url_for('delete_tag', request_id=request.request_id, tag_id=tag.tag_id) }}"><img title="delete" class="icon" src="../static/images/trash.png" alt="delete"></a>
+</span>
     {% endif %}  
     <br>
 {% endfor %}
@@ -117,6 +122,7 @@ Tags</button></h2>
 {% else %}
 No tags!
 {% endif %}
+</div>
 </div>
 </div>
 </div>
