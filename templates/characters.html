@@ -2,37 +2,54 @@
 
 {% block body %}
 
+<div class="single-card-box">Total: {{characters.total}}</div>
 {% for character in characters %}
-
-<a href="{{ url_for('character', character_id=character.character_id)}}">
-{{character.name}}
-</a>
-<br>
-{{ character.description|safe }}<br>
-{{ character.status }}<br>
--------
-<br>
-
+<div class="card-box">
+    <div class="card-title-status">
+<div class="card-title">
+    <a href="{{ url_for('character', character_id=character.character_id)}}">
+    {{character.name}}
+    </a>
+</div>
+    <span class="card-status">
+    {{ character.status }}
+    </span>
+</div>
+<div class="card-description">
+    {{ character.description|safe }}
+</div>
+<div class="card-image">
+    {% if character.image_url%}
+    <img class="characters-requests-image" src="{{character.image_url}}" /><br />
+  {%else%}
+    <img class="characters-requests-image"
+    src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/SpongeBob_SquarePants_character.svg/800px-SpongeBob_SquarePants_character.svg.png"
+  />
+  {% endif %} 
+</div>
+</div>
 {% endfor %}
-
+<div class="card-box">
+<nav aria-label="Page navigation example">
+    <ul class="pagination pagination-sm">
 {% if characters.has_prev %}
-    <a href="{{url_for('characters', page=characters.prev_num)}}">{{'<'}}</a>
+<li class="page-item"> <a class="page-link" href="{{url_for('characters', page=characters.prev_num)}}" aria-label="Previous">{{'<'}}</a></li>
 {% endif %}
 {% for number in characters.iter_pages() %}
     {% if characters.page != number %}
-        <a href="{{ url_for('characters', page=number)}}">
+    <li class="page-item">  <a class="page-link" href="{{ url_for('characters', page=number)}}">
         {{ number }}
-        </a>
+        </a> </li>
     {% else %}
-        {{ number }}
+    <li class="page-item active" aria-current="page"> <span class="page-link">{{ number }}</span></li>
     {% endif %}
     {% endfor %}
 
 {% if characters.has_next %}
-<a href="{{url_for('characters', page=characters.next_num)}}">{{'>'}}</a>
+<li class="page-item"><a class="page-link" href="{{url_for('characters', page=characters.next_num)}}" aria-label="Next">{{'>'}}</a>  </li>
 {% endif %}
-
+    </ul>
+    </nav>
 <br>
-{{characters.total}}
-
+</div>
 {% endblock %}

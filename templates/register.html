@@ -1,20 +1,38 @@
 {% extends 'base.html' %}
 
 {% block body %}
+
+{% if current_user.is_anonymous %}
 <form action="{{ url_for('register') }}" method="POST">
+    <div class="mb-3">
     {{ register_form.csrf_token() }}
-    {{ register_form.username.label }}
-    {{ register_form.username }}
-    {{ register_form.email.label }}
-    {{ register_form.email }}
-    {{ register_form.password.label }}
-    {{ register_form.password }}
-    {{ register_form.password_confirm.label }}
-    {{ register_form.password_confirm }}
-    {{ register_form.category.label }}
-    {{ register_form.category }}
-    {{ register_form.submit }}
+    {{ register_form.username.label(class_="form-label") }}
+    {{ register_form.username(class_="form-control") }}
+    </div>
+    <div class="mb-3">
+    {{ register_form.email.label(class_="form-label") }}
+    {{ register_form.email(class_="form-control") }}
+    </div>
+    <div class="mb-3">
+    {{ register_form.password.label(class_="form-label") }}
+    {{ register_form.password(class_="form-control") }}
+    </div>
+    <div class="mb-3">
+    {{ register_form.password_confirm.label(class_="form-label") }}
+    {{ register_form.password_confirm(class_="form-control") }}
+    </div>
+    <div class="mb-3">
+    {{ register_form.category.label(class_="form-label") }}
+    {{ register_form.category(class="form-select") }}
+    </div>
+    {{ register_form.submit(class_="button") }}
 
 
 </form>
+
+{% else %}
+
+You are logged it!
+
+{% endif %}
 {% endblock %}

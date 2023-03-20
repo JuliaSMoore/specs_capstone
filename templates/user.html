@@ -6,18 +6,31 @@
 
 Hi, {{ user.username }}!
 
-Your Profile:<br>
+<div class="single-card-box">
 Email: {{ user.email }}<br>
 Category: {{ user.category }}<br>
+</div>
 
-Your Requests:<br>
+<div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOne">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+Your Requests </button></h2>
+<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+    <div class="accordion-body">
 {% for request in requests %}
 <a href="{{ url_for('request', request_id=request.request_id) }}">{{ request.title }}</a>
 <br>
 {% endfor %}
-
-Your Characters:<br>
-
+</div>
+</div>
+</div>
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingTwo">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+Your Characters</button></h2>
+<div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+    <div class="accordion-body">
 {% for character in characters %}
 
 <a href="{{ url_for('character', character_id=character.character_id)}}">
@@ -25,9 +38,16 @@ Your Characters:<br>
 </a>
 <br>
 {% endfor %}
+</div>
+</div>
+</div>
 
-Your comments: <br>
-
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingThree">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+Your Comments</button></h2>
+<div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+    <div class="accordion-body">
 {% for comment in comments %}
 
 <a href="{{ url_for('request', request_id=comment.request_id) }}">Go to request</a><br>
@@ -35,10 +55,18 @@ Your comments: <br>
 <br>
 {% endfor %}
 
+</div>
+</div>
+</div>
+
 {% if current_user.category == "Writer"%}
 
-Your booked requests: <br>
-
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingFour">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+Your Booked Requests </button></h2>
+<div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+    <div class="accordion-body">
 {% for request in booked_requests %}
 <a href="{{ url_for('request', request_id=request.request_id) }}">{{request.title}}</a>
 <br>
@@ -46,8 +74,16 @@ Your booked requests: <br>
 
 {% endfor %}
 
-Your booked characters: <br>
+</div>
+</div>
+</div>
 
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingFive">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+Your booked characters:</button></h2>
+<div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#accordionExample">
+    <div class="accordion-body">
 {% for character in booked_characters %}
 <a href="{{ url_for('character', character_id=character.character_id)}}">
     {{character.name}}
@@ -55,17 +91,25 @@ Your booked characters: <br>
     <br>
     {{ character.status }} <br>
     {% endfor %}
-
+</div>
+</div>
+</div>
 {% endif %}
     
-    You rated there requests: <br>
-    
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingSix">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+    You rated these requests: </button></h2>
+    <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#accordionExample">
+        <div class="accordion-body">
     {% for rating in ratings %}
     
-    <a href="{{ url_for('request', request_id=rating.requests.request_id) }}">{{ rating.requests.title }}</a>: 
-    {{ rating.score }}<br>
+    <a href="{{ url_for('request', request_id=rating.requests.request_id) }}">{{ rating.requests.title }}</a>: {{ rating.score }}<br>
 
     {% endfor %}
+    </div>
+    </div>
+    </div>
 
     {% else %}
 

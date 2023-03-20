@@ -1,32 +1,57 @@
-{% extends 'base.html' %}
-
-{% block body %}
-
-{{ character.name }}<br>
-{{ character.created_by.username }}<br>
-{{ character.time_created }} <br>
-{{ character.description|safe }}<br>
-{% if character.image_url%}
-    <img width=500px src="{{character.image_url}}"/><br>
-{%else%}
-    <img width=500px src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/SpongeBob_SquarePants_character.svg/800px-SpongeBob_SquarePants_character.svg.png"/><br>
-{% endif %}
-{{character.status}}<br>
-{% if character.booked == True %}
-    {{character.booked_by.username}}<br>
-{% endif %}
-{% if current_user.category == "Writer" and character.booked == False %}
-<a href="{{ url_for('book_character', character_id=character.character_id) }}"><button>Book</button></a>
-{% endif %}
-
-{% if character.status == "In Process" and character.booked_by_id == current_user.id %}
-    <a href="{{ url_for('complete_character', character_id=character.character_id) }}"><button>Complete</button></a>
-    <a href="{{ url_for('drop_character', character_id=character.character_id) }}"><button>Drop</button></a><br>
-{% endif %}
-
-{% if character.created_by_id == current_user.id %}
-<a href="{{ url_for('edit_character', character_id=character.character_id) }}"><button>Edit</button></a>
-<a href="{{url_for('delete_character', character_id=character.character_id)}}"><button>Delete</button></a>
-{% endif %}
-
+{% extends 'base.html' %} {% block body %}
+<div class="single-card-box">
+  <div class="single-card-title">
+  {{ character.name }}
+  {% if character.created_by_id == current_user.id %}
+    <a href="{{ url_for('edit_character', character_id=character.character_id) }}"
+    ><img class="icon" alt="edit" title="edit" src="../static/images/edit.png"></a
+  >
+    <a href="{{url_for('delete_character', character_id=character.character_id)}}"
+    ><img title="delete" class="icon" src="../static/images/trash.png" alt="delete"></a
+  >
+  {% endif %}
+</div>
+<div class="single-card-info">
+  <div class="card-username-time">
+    <div>
+  {{ character.created_by.username }}
+  </div>
+  <div class="time-created">
+  {{ character.time_created }}
+  </div>
+</div>
+<div>
+  {{ character.description|safe }}
+</div>
+<div class="single-character-request-image">
+  {% if character.image_url%}
+    <img class="single-character-request-image-img" src="{{character.image_url}}" />
+  {%else%}
+    <img
+    class="single-character-request-image-img"
+    src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/SpongeBob_SquarePants_character.svg/800px-SpongeBob_SquarePants_character.svg.png"
+  />
+  {% endif %} 
+</div>
+</div>
+  <div class="booked">
+  {{character.status}}
+  {% if character.booked == True %} 
+    ({{character.booked_by.username}})
+  {% endif %} 
+  {% if current_user.category == "Writer" and character.booked ==
+  False %}
+    <a href="{{ url_for('book_character', character_id=character.character_id) }}"
+    ><img class="icon" alt="book" title="book" src="../static/images/book.png"></a
+  >
+  {% endif %} 
+  {% if character.status == "In Process" and character.booked_by_id
+  == current_user.id %}
+  <a href="{{ url_for('drop_character', character_id=character.character_id) }}"
+  ><img class="icon" alt="drop" title="drop" src="../static/images/drop.png"></a>
+    <a href="{{ url_for('complete_character', character_id=character.character_id) }}"
+    ><img class="icon" alt="complete" title="complete" src="../static/images/complete.png"></a>
+  {% endif %} 
+</div>
+</div>
 {% endblock %}

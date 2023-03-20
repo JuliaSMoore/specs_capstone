@@ -3,12 +3,16 @@
 {% block body %}
 
 <form action="{{ url_for('login') }}" method="POST">
+    <div class="mb-3">
 {{ login_form.csrf_token() }}
-{{ login_form.email.label }}
-{{ login_form.email }}
-{{ login_form.password.label }}
-{{ login_form.password }}
-{{ login_form.submit }}
+{{ login_form.email.label(class_="form-label") }}
+{{ login_form.email(class_="form-control") }}
+</div>
+<div class="mb-3">
+{{ login_form.password.label(class_="form-label") }}
+{{ login_form.password(class_="form-control") }}
+</div>
+{{ login_form.submit(class_="button") }}
 
 
 </form>

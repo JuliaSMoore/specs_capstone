@@ -1,20 +1,25 @@
 {% extends 'base.html' %}
 
 {% block body %}
+<div class="card-box">
 <form method="POST">
+    <div class="mb-3">
 {{ character_form.csrf_token() }}
-{{ character_form.name.label }}
-{{ character_form.name }}
-
-{{ character_form.description.label }}
-{{ character_form.description }}
-
-{{ character_form.image_url.label }}
-{{ character_form.image_url }}
-
-{{ character_form.submit }}
+{{ character_form.name.label(class_="form-label") }}
+{{ character_form.name(class_="form-control") }}
+</div>
+<div class="mb-3">
+{{ character_form.description.label(class_="form-label") }}
+{{ character_form.description(class_="form-control") }}
+</div>
+<div class="mb-3">
+{{ character_form.image_url.label(class_="form-label") }}
+{{ character_form.image_url(class_="form-control") }}
+</div>
+{{ character_form.submit(class_="button") }}
 </form>
 {{ ckeditor.load() }}
 {{ ckeditor.config(name='description') }}
+</div>
 
 {% endblock %}

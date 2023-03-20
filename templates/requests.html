@@ -2,36 +2,61 @@
 
 {% block body %}
 
-{% for request in requests %}
-<a href="{{ url_for('request', request_id=request.request_id) }}">
-{{ request.title }}
-</a>
-<br>
-{{ request.description|safe}}<br>
-{{ request.status }}<br>
--------
-<br>
+<div class="single-card-box">Total: {{requests.total}}</div>
 
+{% for request in requests %}
+
+<div class="card-box">
+    <div class="card-title-status">
+        <a href="{{ url_for('request', request_id=request.request_id) }}">
+<div class="card-title">
+
+{{ request.title }}
+
+</div>
+</a>
+<span class="card-status">
+{{ request.status }}
+</span>
+</div>
+<div class="card-description">
+{{ request.description|safe}}
+</div>
+<div class="card-image">
+{% if request.image_url %}
+    <img class="characters-requests-image" src="{{request.image_url}}"/><br>
+{% else %}
+    <img class="characters-requests-image" src="https://wallup.net/wp-content/uploads/2018/09/29/666600-fantasy-landscape-art-artwork-nature-scenery.jpg" /><br>
+{% endif %}
+</div>
+</div>
 {% endfor %}
 
+<div class="card-box">
+<nav aria-label="Page navigation example">
+    <ul class="pagination pagination-sm">
 {% if requests.has_prev %}
-    <a href="{{url_for('requests', page=requests.prev_num)}}">{{'<'}}</a>
+<li class="page-item">  <a class="page-link" href="{{url_for('requests', page=requests.prev_num)}}" aria-label="Previous">{{'<'}}
+    </a></li>
 {% endif %}
 {% for number in requests.iter_pages() %}
     {% if requests.page != number %}
-        <a href="{{ url_for('requests', page=number)}}">
+    <li class="page-item"><a class="page-link" href="{{ url_for('requests', page=number)}}">
         {{ number }}
-        </a>
+        </a></li> 
     {% else %}
-        {{ number }}
+    <li class="page-item active" aria-current="page"><span class="page-link">{{ number }}</span></li>
     {% endif %}
     {% endfor %}
 
 {% if requests.has_next %}
-<a href="{{url_for('requests', page=requests.next_num)}}">{{'>'}}</a>
+<li class="page-item"><a class="page-link"href="{{url_for('requests', page=requests.next_num)}}" aria-label="Next">{{'>'}}
+</a></li>
 {% endif %}
+</a>
+</ul>
 
-<br>
-{{requests.total}}
+</nav>
+</div>
 
 {% endblock %}

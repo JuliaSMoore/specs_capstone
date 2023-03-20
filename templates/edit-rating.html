@@ -6,7 +6,7 @@
     {{ rating_form.csrf_token() }}
     {{ rating_form.score.label }}
     {{ rating_form.score }}
-    {{ rating_form.submit }}
+    {{ rating_form.submit(class_="button") }}
     </form>
 
 {% endblock %}

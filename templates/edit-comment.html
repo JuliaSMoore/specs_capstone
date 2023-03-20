@@ -3,9 +3,9 @@
 {% block body %}
 <form action="{{url_for('edit_comment', comment_id=comment.comment_id)}}" method="POST">
 {{ comment_form.csrf_token() }}
-{{ comment_form.text.label }}
 {{ comment_form.text }}
-{{ comment_form.submit }}
+{{ comment_form.submit(class_="button") }}
 </form>
-
+{{ ckeditor.load() }}
+{{ ckeditor.config(name='text') }}
 {% endblock %}

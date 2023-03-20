@@ -1,50 +1,83 @@
 {% extends 'base.html' %}
 
 {% block body %}
-{{ request.title }}<br>
-{{ request.created_by.username }}<br>
-{{ request.time_created }}<br>
-{{ request.description|safe}}<br>
+<div class="single-card-box">
+    <div class="single-card-title">
+        {{ request.title }}
+        {% if request.created_by_id == current_user.id %}
+            <a href="{{ url_for('edit_request', request_id=request.request_id) }}"><img class="icon" alt="edit" title="edit" src="../static/images/edit.png"></a>
+            <a href="{{url_for('delete_request', request_id=request.request_id)}}"><img title="delete" class="icon" src="../static/images/trash.png" alt="delete"></a>
+        {% endif %}
+</div>
+<div class="single-card-info">
+    <div class="card-username-time">
+    <div>
+        {{ request.created_by.username }}
+    </div>
+    <div class="time-created">
+{{ request.time_created }}
+</div>
+</div>
+<div>
+{{ request.description|safe}}
+</div>
+<div class="single-character-request-image">
 {% if request.image_url %}
-    <img width=500px src="{{request.image_url}}"/><br>
+    <img class="single-character-request-image-img" src="{{request.image_url}}"/>
 {% else %}
-    <img width=500px src="https://wallup.net/wp-content/uploads/2018/09/29/666600-fantasy-landscape-art-artwork-nature-scenery.jpg" /><br>
+    <img class="single-character-request-image-img" src="https://wallup.net/wp-content/uploads/2018/09/29/666600-fantasy-landscape-art-artwork-nature-scenery.jpg" />
 {% endif %}
+</div>
+</div>
+<div class="ratings">
+    <div class="avg-total-ratings">
+    Average rating: {{ ratings_average }}<br>
+    Total rates: {{ ratings_total }}
+</div>
 {% if not rating %}
     <form action="{{url_for('rate_request', request_id=request.request_id)}}" method="POST">
+        <div class="form-check">
     {{ rating_form.csrf_token() }}
     {{ rating_form.score.label }}
     {{ rating_form.score }}
-    {{ rating_form.submit }}
+    {{ rating_form.submit(class_="button") }}
+    </div>
     </form>
 {% else %}
-    {{ rating.score }}
-    <a href="{{ url_for('edit_rating', rating_id=rating.rating_id) }}"><button>Edit</button></a><br>
+<div>
+    Your rating: {{ rating.score }}
+    <a href="{{ url_for('edit_rating', rating_id=rating.rating_id) }}"><img class="icon" alt="edit" title="edit" src="../static/images/edit.png"></a>
+</div>
 {% endif %}
-{{ ratings_average }}<br>
-{{ ratings_total }}<br>
-{{ request.status }}<br>
+</div>
+<div class="booked">
+{{ request.status }}
 {% if request.booked == True %}
-    {{request.booked_by.username}}<br>
+<div>
+    {{request.booked_by.username}}
+</div>
 {% endif %}
 {% if request.status == "In Process" and request.booked_by_id == current_user.id %}
-    <a href="{{ url_for('complete_request', request_id=request.request_id) }}"><button>Complete</button></a>
-    <a href="{{ url_for('drop_request', request_id=request.request_id) }}"><button>Drop</button></a><br>
-{% endif %}
-{% if request.created_by_id == current_user.id %}
-    <a href="{{ url_for('edit_request', request_id=request.request_id) }}"><button>Edit Request</button></a>
-    <a href="{{url_for('delete_request', request_id=request.request_id)}}"><button>Delete Request</button></a><br>
+    <a href="{{ url_for('complete_request', request_id=request.request_id) }}"><img class="icon" alt="complete" title="complete" src="../static/images/complete.png"></a>
+    <a href="{{ url_for('drop_request', request_id=request.request_id) }}"><img class="icon" alt="drop" title="drop" src="../static/images/drop.png"></a><br>
 {% endif %}
 
 {% if current_user.category == "Writer" and request.booked == False %}
-    <a href="{{ url_for('book_request', request_id=request.request_id) }}"><button>Book</button></a><br>
+    <a href="{{ url_for('book_request', request_id=request.request_id) }}"><img class="icon" alt="book" title="book" src="../static/images/book.png"></a>
 {% endif %}
-
+</div>
+<div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingChar">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseChar" aria-expanded="true" aria-controls="collapseChar">
+Characters Attached</button></h2>
+<div id="collapseChar" class="accordion-collapse collapse" aria-labelledby="headingChar" data-bs-parent="#accordionExample">
+    <div class="accordion-body">
 {% if characters: %}
 {% for character in characters %}
     <a href="{{url_for('character', character_id=character.character_id)}}">{{character.name}}</a>
     {% if request.created_by_id == current_user.id %}
-    <a href="{{ url_for('delete_character_from_request', request_id=request.request_id, character_id=character.character_id) }}"><button>Delete</button></a>
+    <a href="{{ url_for('delete_character_from_request', request_id=request.request_id, character_id=character.character_id) }}"><img title="delete" class="icon" src="../static/images/trash.png" alt="delete"></a>
     {% endif %}
     <br>
 {% endfor %}
@@ -52,17 +85,26 @@
 <form action="{{ url_for('add_character_to_request', request_id=request.request_id) }}" method="POST">
 {{ character_form.csrf_token() }}
 {{ character_form.characters }}
-{{ character_form.submit }}
+{{ character_form.submit(class_="button") }}
 </form>
 {% else %}
 No characters!<br>
 {% endif %}
-
+</div>
+</div>
+</div>
+<div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingTags">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTags" aria-expanded="true" aria-controls="collapseTags">
+Tags</button></h2>
+<div id="collapseTags" class="accordion-collapse collapse" aria-labelledby="headingTags" data-bs-parent="#accordionExample">
+    <div class="accordion-body">
 {% if tags: %}
 {% for tag in tags: %}
     {{tag.name}}
     {% if request.created_by_id == current_user.id %}
-    <a href="{{ url_for('delete_tag', request_id=request.request_id, tag_id=tag.tag_id) }}"><button>Delete</button></a>
+    <a href="{{ url_for('delete_tag', request_id=request.request_id, tag_id=tag.tag_id) }}"><img title="delete" class="icon" src="../static/images/trash.png" alt="delete"></a>
     {% endif %}  
     <br>
 {% endfor %}
@@ -70,49 +112,61 @@ No characters!<br>
 <form action="{{ url_for('add_tags', request_id=request.request_id) }}" method="POST">
 {{ tag_form.csrf_token() }}
 {{ tag_form.tags }}
-{{ tag_form.submit }}
+{{ tag_form.submit(class_="button") }}
 </form>
 {% else %}
 No tags!
 {% endif %}
+</div>
+</div>
+</div>
 
 <form action="{{ url_for('add_comment', request_id=request.request_id) }}" method="POST">
 {{ comment_form.csrf_token() }}
 {{ comment_form.text | safe }}
-{{ comment_form.submit }}
+{{ comment_form.submit(class_="button") }}
 </form>
 {{ ckeditor.load() }}
 {{ ckeditor.config(name='text') }}
-
 {% for comment in comments: %}
-    {{ comment.users.username }}<br>
-    {{ comment.time_created }}<br>
-    {{ comment.text | safe}} <br>
-    {% if comment.user_id == current_user.id %}
-        <a href="{{ url_for('delete_comment', request_id=request.request_id, comment_id=comment.comment_id) }}"><button>Delete Comment</button></a>
-        <a href="{{url_for('edit_comment', comment_id=comment.comment_id)}}"><button>Edit</button></a><br>
-    {% endif %}
-    ------ <br>
+<div class="comments">
+<div class="comments-header">
+    {{ comment.users.username }}
+    <div class="commens-header-info">
+        {% if comment.user_id == current_user.id %}
+        <a href="{{url_for('edit_comment', comment_id=comment.comment_id)}}"><img class="icon" alt="edit" title="edit" src="../static/images/edit.png"></a>
+        <a href="{{ url_for('delete_comment', request_id=request.request_id, comment_id=comment.comment_id) }}"><img title="delete" class="icon" src="../static/images/trash.png" alt="delete"></a>
+        {% endif %}
+        {{ comment.time_created }}
+</div>
+</div>
+{{ comment.text | safe}} <br>
+</div>
 {% endfor %}
 
+<nav aria-label="Page navigation example">
+    <ul class="pagination pagination-sm">
 {% if comments.has_prev %}
-    <a href="{{url_for('request', page=comments.prev_num, request_id=request.request_id)}}">{{'<'}}</a>
+<li class="page-item"> <a class="page-link" href="{{url_for('request', page=comments.prev_num, request_id=request.request_id)}}" aria-label="Previous">{{'<'}}</a> </li>
 {% endif %}
+
 {% for number in comments.iter_pages() %}
     {% if comments.page != number %}
-        <a href="{{ url_for('request', page=number, request_id=request.request_id)}}">
+    <li class="page-item"><a class="page-link" href="{{ url_for('request', page=number, request_id=request.request_id)}}"> 
         {{ number }}
-        </a>
+        </a></li>
     {% else %}
-        {{ number }}
+    <li class="page-item active" aria-current="page">  <span class="page-link"> {{ number }} </span> </li>
     {% endif %}
     {% endfor %}
 
 {% if comments.has_next %}
-<a href="{{url_for('request', page=comments.next_num, request_id=request.request_id)}}">{{'>'}}</a>
+<li class="page-item"><a class="page-link" href="{{url_for('request', page=comments.next_num, request_id=request.request_id)}}" aria-label="Next">{{'>'}}</a> </li>
 {% endif %}
-
+    </ul>
+    <div class="single-card-box">Total: {{comments.total}}</div>
+    </nav>
 <br>
-{{comments.total}}
+</div>
 {% endblock %}
 
